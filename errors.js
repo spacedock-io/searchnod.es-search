@@ -11,3 +11,12 @@ exports.NotFound = function (msg) {
   err.code = 'ENOTFOUND'
   return err
 }
+
+exports.ElasticSearchError = function (statusCode, body) {
+  var err = new Error('ElasticSearch error')
+  err.statusCode = 500
+  err.code = 'EELASTICSEARCH'
+  err.elasticSearchStatusCode = statusCode
+  err.elasticSeachResponse = body
+  return err
+}
