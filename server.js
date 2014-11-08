@@ -83,6 +83,7 @@ router.addRoute('/search', {
 
 var server = http.createServer(function (req, res) {
   log.info('request', { method: req.method, url: req.url, ip: req.socket.remoteAddress })
+  res.setHeader('access-control-allow-origin', '*')
   router.call(this, req, res)
 })
 
