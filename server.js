@@ -42,6 +42,8 @@ function search(req, res, opts) {
       highlight: {
         boundary_chars: '\n',
         boundary_max_scan: 16 * 85, // scan approximately 16 lines
+        pre_tags: [''],
+        post_tags: [''],
         order: 'score',
         fields: {
           content: {
