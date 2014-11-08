@@ -59,7 +59,7 @@ function search(req, res, opts) {
 
     if (!body.hits) return sendJson(req, res, [])
 
-    res.setHeader('x-took', body.took.toString)
+    res.setHeader('x-took', body.took.toString())
     body.hits.hits.map(function (hit) {
       var fields = hit.fields
       results.push({
