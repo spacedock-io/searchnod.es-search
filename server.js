@@ -65,6 +65,7 @@ function search(req, res, opts) {
       results.push({
         package: fields.package[0],
         filename: fields.filename[0],
+        author: fields.author[0],
         score: hit._score,
         content: hit.highlight.content
       })
