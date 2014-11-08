@@ -8,5 +8,8 @@
     "routes-router": "^4.1.1",
     "send-data": "^3.3.3",
     "request": "^2.46.0"
+  },
+  "scripts" : {
+    "start": "node server.js config.json"
   }
 }
