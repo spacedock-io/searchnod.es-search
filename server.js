@@ -40,12 +40,12 @@ function search(req, res, opts) {
       },
       fields: ['package', 'version', 'filename'],
       highlight: {
+        boundary_chars: '\n',
+        boundary_max_scan: 16 * 85, // scan approximately 16 lines
         order: 'score',
         fields: {
           content: {
-            // TODO: make it output reasonable context instead of the whole
-            // file
-            number_of_fragments: 0
+            number_of_fragments: 10
           }
         }
       }
