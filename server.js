@@ -38,7 +38,7 @@ function search(req, res, opts) {
           query: q
         }
       },
-      fields: ['package', 'version', 'filename'],
+      fields: ['package', 'version', 'filename', 'author'],
       highlight: {
         boundary_chars: '\n',
         boundary_max_scan: 16 * 85, // scan approximately 16 lines
