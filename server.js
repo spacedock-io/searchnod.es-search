@@ -59,7 +59,9 @@ function search(req, res, opts) {
     if (res_.statusCode !== 200)
       return sendError(req, res, errors.ElasticSearchError(res_.statusCode, body))
 
-    if (!body.hits) return sendJson(req, res, [])
+    // Send a 404 here because Michał's framework sucks.
+    if (!body.hits || body.hits.hits.length === 0)
+      return sendError(req, res, errors.NotFound('No results found'));
 
     res.setHeader('x-took', body.took.toString())
     body.hits.hits.map(function (hit) {
