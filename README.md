@@ -2,7 +2,8 @@
 
 ## Usage
 
-### `POST /search?q=<search-term>`
+### `POST /search?q=<search-term>&from=<from>&size=<size>`
+`size` and `from` are optional.
 
 #### Example response
 ```json
