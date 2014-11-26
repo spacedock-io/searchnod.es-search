@@ -13,6 +13,7 @@ var sendError = require('./send-error.js')
 var config = JSON.parse(fs.readFileSync(process.argv[2]))
 
 var MAX_SIZE = 100
+var MIN_QUERY_LENGTH = 3
 
 var log = new Joke()
 log.pipe(Joke.stringify()).pipe(process.stdout)
@@ -37,16 +38,16 @@ function search(req, res, opts) {
   log.info('searching', q)
 
   if (!q)
-    return sendError(req, res, errors.BadRequest('`q` is required'))
-  if (q.length < 3)
-    return sendError(req, res, errors.BadRequest('`q` has to be longer than 3 characters'));
+    return sendError(req, res, errors.BadRequest('Query (`q`) is required'))
+  if (q.length < MIN_QUERY_LENGTH)
+    return sendError(req, res, errors.BadRequest('Query (`q`) has to be longer than ' + MIN_QUERY_LENGTH))
 
   if (size) {
     if (Number.isNaN(size))
-      return sendError(req, res, errors.BadRequest('`size` has to be a number'))
+      return sendError(req, res, errors.BadRequest('Size (`size`) has to be a number'))
 
     if (size > MAX_SIZE)
-      return sendError(req, res, errors.BadRequest('You can request at most ' + MAX_SIZE + ' hits'))
+      return sendError(req, res, errors.BadRequest('Size (`size`) cannot be greater than ' + MAX_SIZE))
 
     esQs.size = size
   }
