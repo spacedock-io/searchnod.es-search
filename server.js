@@ -24,6 +24,15 @@ function search(req, res, opts) {
   var from = parseInt(params.from, 10)
   var size = parseInt(params.size, 10)
   var esQs = {}
+  var query = {
+    query: {
+      query_string: {
+        fields: ['content']
+      }
+    },
+    filter: {}
+  }
+  var packageMatch
 
   log.info('searching', q)
 
@@ -49,7 +58,12 @@ function search(req, res, opts) {
     esQs.from = from
   }
 
-  // TODO: implement limiting search to a package, like package:npm
+  if ((packageMatch = q.match(/package:(.*?)(?:\s|$)/)) !== null) {
+    query.filter.term = { package: packageMatch[1] }
+    q = q.replace(packageMatch[0], '')
+  }
+
+  query.query.query_string.query = q
 
   request({
     url: config.elasticsearch + '/files/file/_search',
@@ -58,10 +72,7 @@ function search(req, res, opts) {
     json: true,
     body: {
       query: {
-        query_string: {
-          fields: ['content'],
-          query: q
-        }
+        filtered: query
       },
       fields: ['package', 'version', 'filename', 'author'],
       highlight: {
