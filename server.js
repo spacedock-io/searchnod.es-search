@@ -12,12 +12,19 @@ var sendError = require('./send-error.js')
 
 var config = JSON.parse(fs.readFileSync(process.argv[2]))
 
+var MAX_SIZE = 100
+
 var log = new Joke()
 log.pipe(Joke.stringify()).pipe(process.stdout)
 log.info('npmco.de-search starting')
 
 function search(req, res, opts) {
-  var q = qs.parse(url.parse(req.url).query).q
+  var params = qs.parse(url.parse(req.url).query)
+  var q = params.q
+  var from = parseInt(params.from, 10)
+  var size = parseInt(params.size, 10)
+  var esQs = {}
+
   log.info('searching', q)
 
   if (!q)
@@ -25,10 +32,28 @@ function search(req, res, opts) {
   if (q.length < 3)
     return sendError(req, res, errors.BadRequest('`q` has to be longer than 3 characters'));
 
+  if (size) {
+    if (Number.isNaN(size))
+      return sendError(req, res, errors.BadRequest('`size` has to be a number'))
+
+    if (size > MAX_SIZE)
+      return sendError(req, res, errors.BadRequest('You can request at most ' + MAX_SIZE + ' hits'))
+
+    esQs.size = size
+  }
+
+  if (from) {
+    if (Number.isNaN(from))
+      return sendError(req, res, errors.BadRequest('`from` has to be a number'))
+
+    esQs.from = from
+  }
+
   // TODO: implement limiting search to a package, like package:npm
 
   request({
     url: config.elasticsearch + '/files/file/_search',
+    qs: esQs,
     method: 'POST',
     json: true,
     body: {
@@ -75,7 +100,12 @@ function search(req, res, opts) {
       })
     })
 
-    sendJson(req, res, results)
+    sendJson(req, res, {
+      hits: {
+        total: body.hits.total,
+        hits: results
+      }
+    })
   });
 }
 
