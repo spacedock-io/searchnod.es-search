@@ -113,7 +113,7 @@ function search(req, res, opts) {
     })
 
     sendJson(req, res, {
-      hits: {
+      data: {
         total: body.hits.total,
         hits: results
       }
